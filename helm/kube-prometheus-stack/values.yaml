@@ -1,0 +1,65 @@
+kube-prometheus-stack:
+  # https://github.com/prometheus-community/helm-charts/blob/main/charts/kube-prometheus-stack/values.yaml
+  prometheus:
+    prometheusSpec:
+      # discover ServiceMonitor in all namespaces
+      serviceMonitorSelectorNilUsesHelmValues: false
+      enableFeatures:
+        - exemplar-storage
+  grafana:
+    sidecar:
+      dashboards:
+        searchNamespace: ALL
+    additionalDataSources:
+      # this follows https://github.com/grafana/tns/blob/main/production/docker-compose/datasources.yaml
+      # see also the additional links to Grafana docs specific for data sources
+      - name: Loki
+        type: loki
+        uid: loki
+        access: proxy
+        url: http://loki.loki:3100
+        # https://grafana.com/docs/grafana/latest/datasources/loki/#configure-the-data-source-with-provisioning
+        jsonData:
+          derivedFields:
+            - name: trace_id
+              datasourceUid: tempo
+              matcherRegex: "trace_id=(\\w+)"
+              url: '$${__value.raw}'
+      - name: Prometheus
+        type: prometheus
+        uid: prometheus
+        access: proxy
+        url: http://kube-prometheus-stack-prometheus:9090/
+        # https://grafana.com/docs/grafana/latest/datasources/prometheus/#provision-the-prometheus-data-source
+        jsonData:
+          exemplarTraceIdDestinations:
+            - name: trace_id
+              datasourceUid: tempo
+              # https://github.com/grafana-operator/grafana-operator/blob/master/api/integreatly/v1alpha1/grafanadatasource_types.go#L205
+              urlDisplayLabel: View in Tempo
+      - name: Tempo
+        type: tempo
+        uid: tempo
+        access: proxy
+        url: http://tempo.tempo:3100
+        # https://grafana.com/docs/grafana/latest/datasources/tempo/#provision-the-tempo-data-source
+        jsonData:
+          httpMethod: GET
+          tracesToLogs:
+            datasourceUid: 'loki'
+            # they must be attached by the instrumentation
+            tags: [ 'pod', 'namespace' ]
+            # extend time span a little, to ensure catching all logs of that span
+            spanStartTimeShift: 1s
+            spandEndTimeShift: 1s
+            lokiSearch: true
+          serviceMap:
+            datasourceUid: 'prometheus'
+    # Make anon login be the Admin for demo purposes! NEVER USE IN PRODUCTION SYSTEMS!
+    grafana.ini:
+      auth:
+        disable_login_form: true
+      auth.anonymous:
+        enabled: true
+        org_name: "Main Org."
+        org_role: Admin

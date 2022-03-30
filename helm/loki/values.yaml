@@ -1,0 +1,4 @@
+loki:
+  # https://github.com/grafana/helm-charts/blob/main/charts/loki/values.yaml
+  serviceMonitor:
+    enabled: true

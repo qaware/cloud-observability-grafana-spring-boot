@@ -1,0 +1,21 @@
+spring:
+  main.banner-mode: off
+management:
+  endpoints.web.exposure.include: [ health, info, prometheus ]
+  metrics:
+    # enable distribution statistics,
+    # as exemplars are only reported for histogram buckets!
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+      minimum-expected-value:
+        http.server.requests: 5ms
+      maximum-expected-value:
+        http.server.requests: 1000ms
+
+# the following trick prepends the trace_id=XXXX value to each log statement,
+# which enables correlation with traces from logs
+# see tip with MDC in https://docs.spring.io/spring-boot/docs/current/reference/html/features.html#features.logging.custom-log-configuration
+# the label name is 'trace_id' (or also traceId), following https://github.com/grafana/tns/blob/main/production/docker-compose/datasources.yaml
+# the MDC value (= loki label value) is 'trace_id' or 0 if not set, see https://github.com/open-telemetry/opentelemetry-java-instrumentation/blob/main/docs/logger-mdc-instrumentation.md
+logging.pattern.level: '%prefix(%mdc{trace_id:-0}) %5p'

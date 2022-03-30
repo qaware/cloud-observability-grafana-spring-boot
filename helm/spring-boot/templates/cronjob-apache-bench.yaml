@@ -1,0 +1,30 @@
+{{- $cronJobName := printf "%s-cronjob" (include "app.name" $ | trunc 52) }}
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $cronJobName }}
+spec:
+  schedule: "*/1 * * * *" # run every minute
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 5
+  jobTemplate:
+    spec:
+      template:
+        metadata:
+          labels:
+            app.kubernetes.io/name: {{ $cronJobName }}
+        spec:
+          containers:
+            - name: {{ $cronJobName }}
+              image: "docker.io/devth/alpine-bench:0.1"
+              args:
+                - '-n'
+                - '1000' # number of requests
+                - '-c'
+                - '10' # concurrency
+                - '-m'
+                - 'POST'
+                - {{ printf "http://%s:8080/trigger-me" (include "app.servicename" $) | squote }}
+          restartPolicy: OnFailure
+      backoffLimit: 2
