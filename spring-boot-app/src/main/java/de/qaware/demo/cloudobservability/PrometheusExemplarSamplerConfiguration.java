@@ -10,8 +10,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * Temporary instrumentation of PrometheusMeterRegistry
- * with Exemplar Sampler for Spring Boot Actuator.
+ * Temporary instrumentation of PrometheusMeterRegistry with
+ * Exemplar Sampler for Spring Boot Actuator. Required as long as
+ * https://github.com/spring-projects/spring-boot/pull/30472 isn't merged.
  */
 @Configuration
 public class PrometheusExemplarSamplerConfiguration {
