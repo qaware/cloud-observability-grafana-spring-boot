@@ -3,6 +3,7 @@ package de.qaware.demo.cloudobservability;
 import io.micrometer.core.instrument.Clock;
 import io.micrometer.prometheus.PrometheusConfig;
 import io.micrometer.prometheus.PrometheusMeterRegistry;
+import io.opentelemetry.api.trace.Span;
 import io.prometheus.client.CollectorRegistry;
 import io.prometheus.client.exemplars.DefaultExemplarSampler;
 import io.prometheus.client.exemplars.tracer.otel_agent.OpenTelemetryAgentSpanContextSupplier;
@@ -21,7 +22,17 @@ public class PrometheusExemplarSamplerConfiguration {
                                                                        CollectorRegistry collectorRegistry, Clock clock) {
         return new PrometheusMeterRegistry(prometheusConfig, collectorRegistry, clock,
                 // this will lead to ClassCastException if -javaagent:opentelemetry-javaagent.jar is missing!
-                new DefaultExemplarSampler(new OpenTelemetryAgentSpanContextSupplier())
+                new DefaultExemplarSampler(new OpenTelemetryAgentSpanContextSupplier() {
+                    // Only return traceId if trace is actually sampled, as otherwise exemplar is useless
+                    // Can be removed once https://github.com/prometheus/client_java/pull/766 is merged & released
+                    @Override
+                    public String getTraceId() {
+                        if (!Span.current().getSpanContext().isSampled()) {
+                            return null;
+                        }
+                        return super.getTraceId();
+                    }
+                })
         );
     }
 }
