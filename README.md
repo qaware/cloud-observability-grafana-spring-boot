@@ -4,6 +4,8 @@ A Kubernetes observability demo based on
 minikube. It demonstrates how to monitor a Spring Boot app using
 traces (Tempo), metrics (Prometheus) and logs (Loki) all in Grafana.
 
+[Check out this blog post for more details](https://blog.qaware.de/posts/cloud-observability-grafana-spring-boot/)
+
 ## Prerequisites
 
 Please make sure the following tools are available as commands:
