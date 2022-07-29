@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.6</version>
+        <version>2.7.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>de.qaware.demo.cloudobservability</groupId>
@@ -17,21 +17,13 @@
         <java.version>17</java.version>
     </properties>
 
-    <!-- Use repo providing Micrometer 1.9.0-SNAPSHOT -->
-    <repositories>
-        <repository>
-            <id>spring-io-snapshots</id>
-            <url>https://repo.spring.io/libs-snapshot</url>
-        </repository>
-    </repositories>
-
     <dependencyManagement>
-        <!-- Temporarily use Micrometer 1.9.0-SNAPSHOT with Exemplar Support -->
+        <!-- Temporarily use Prometheus 0.16.0 with important Exemplar fixes -->
         <dependencies>
             <dependency>
-                <groupId>io.micrometer</groupId>
-                <artifactId>micrometer-bom</artifactId>
-                <version>1.9.0-SNAPSHOT</version>
+                <groupId>io.prometheus</groupId>
+                <artifactId>simpleclient_bom</artifactId>
+                <version>0.16.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -51,13 +43,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>io.opentelemetry</groupId>
-            <artifactId>opentelemetry-api</artifactId>
-            <version>1.12.0</version>
-            <scope>provided</scope>
         </dependency>
 
     </dependencies>
