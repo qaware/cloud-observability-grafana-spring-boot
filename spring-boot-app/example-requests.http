@@ -1,0 +1,6 @@
+###
+POST http://localhost:8080/trigger-me
+
+###
+GET http://localhost:8080/actuator/prometheus
+Accept: application/openmetrics-text # important to see exemplars
