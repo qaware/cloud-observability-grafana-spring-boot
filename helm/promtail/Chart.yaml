@@ -6,5 +6,5 @@ description: Chart to deploy grafana promtail
 dependencies:
   # https://github.com/grafana/helm-charts/blob/main/charts/promtail/Chart.yaml
   - name: promtail
-    version: 6.2.2
+    version: 6.4.0
     repository: https://grafana.github.io/helm-charts
