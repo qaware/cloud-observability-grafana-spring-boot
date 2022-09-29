@@ -5,7 +5,7 @@ export MINIKUBE_IN_STYLE=false
 MINIKUBE_PROFILE=observability-demo
 echo ">>>> Starting minikube with profile $MINIKUBE_PROFILE..."
 
-minikube start --profile $MINIKUBE_PROFILE
+minikube start --profile $MINIKUBE_PROFILE --kubernetes-version=1.24.6
 minikube profile $MINIKUBE_PROFILE
 
 echo ">>>> Building & pushing Spring Boot Demo App..."

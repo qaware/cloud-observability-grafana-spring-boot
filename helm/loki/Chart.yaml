@@ -4,7 +4,7 @@ version: 1.0.0-SNAPSHOT
 description: Chart to deploy grafana loki
 
 dependencies:
-  # https://github.com/grafana/loki/blob/main/production/helm/loki/Chart.yaml
+  # https://github.com/grafana/helm-charts/blob/main/charts/loki/Chart.yaml
   - name: loki
-    version: 3.2.0
+    version: 2.13.3
     repository: https://grafana.github.io/helm-charts
